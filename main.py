@@ -1,34 +1,32 @@
 import os
-from fastapi import FastAPI, Query, Request
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
-from motor.motor_asyncio import AsyncIOMotorClient
+from flask import Flask, render_template, request, jsonify
+from pymongo import MongoClient
 
-app = FastAPI()
+app = Flask(__name__)
 
-# Templates directory setup
-templates = Jinja2Templates(directory="templates")
-
-# MongoDB Connection details
 MONGO_URI = "mongodb+srv://pawandevprasad1_db_user:123451234500@cluster0.acobnxp.mongodb.net/?appName=Cluster0"
 DB_NAME = "WOW"
 COLLECTION_NAME = "WOW"
 
-client = AsyncIOMotorClient(MONGO_URI)
-db = client[DB_NAME]
-collection = db[COLLECTION_NAME]
+try:
+    client = MongoClient(MONGO_URI)
+    db = client[DB_NAME]
+    collection = db[COLLECTION_NAME]
+    client.admin.command('ping')
+    print("Connected to MongoDB successfully!")
+except Exception as e:
+    print(f"MongoDB Connection Error: {e}")
 
-@app.get("/", response_class=HTMLResponse)
-async def read_root(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-@app.get("/search")
-async def search_data(q: str = Query(..., min_length=1)):
-    query = q.strip()
+@app.route('/search', methods=['GET'])
+def search():
+    query = request.args.get('q', '').strip()
     if not query:
-        return []
+        return jsonify([])
     
-    # Case-insensitive regex search across multiple fields
     regex_query = {"$regex": query, "$options": "i"}
     db_filter = {
         "$or": [
@@ -40,14 +38,13 @@ async def search_data(q: str = Query(..., min_length=1)):
     }
     
     try:
-        cursor = collection.find(db_filter, {"_id": 0})
-        results = await cursor.to_list(length=100)
-        return results
+        results = list(collection.find(db_filter, {"_id": 0}))
+        return jsonify(results)
     except Exception as e:
         print(f"Search error: {e}")
-        return []
+        return jsonify([])
 
-if __name__ == "__main__":
-    import uvicorn
-    port = int(os.environ.get("PORT", 8000))
-    uvicorn.run("main:app", host="0.0.0.0", port=port)
+if __name__ == '__main__':
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)
+    
