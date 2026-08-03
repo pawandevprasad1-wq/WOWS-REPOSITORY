@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WOW Database FastAPI Search Engine</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #C0C0C0; /* Silver background */
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #2c3e50;
+            font-size: 26px;
+        }
+        .search-box-wrapper {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 14px 18px;
+            font-size: 16px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: #3498db;
+        }
+        button {
+            padding: 14px 25px;
+            font-size: 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        #results-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        .result-card {
+            background: #f8f9fa;
+            border-left: 5px solid #3498db;
+            padding: 15px 20px;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            line-height: 1.6;
+        }
+        .result-card p {
+            margin: 4px 0;
+            font-size: 15px;
+        }
+        .placeholder-text {
+            text-align: center;
+            color: #777;
+            font-style: italic;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>WOW Database Search Engine (FastAPI)</h1>
+        <div class="search-box-wrapper">
+            <input type="text" id="searchInput" placeholder="Yahan alphabets ya keywords type karein..." autocomplete="off">
+            <button id="searchBtn">Search</button>
+        </div>
+        <div id="results-container">
+            <div class="placeholder-text">Search box khali hone par sabhi information gayab rahengi.</div>
+        </div>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const resultsContainer = document.getElementById('results-container');
+
+        function performSearch() {
+            const query = searchInput.value.trim();
+            
+            if (query === "") {
+                resultsContainer.innerHTML = '<div class="placeholder-text">Search box khali hone par sabhi information gayab rahengi.</div>';
+                return;
+            }
+
+            fetch(`/search?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    resultsContainer.innerHTML = '';
+                    
+                    if (data.length === 0) {
+                        resultsContainer.innerHTML = '<div class="placeholder-text">Koi matching information nahi mili.</div>';
+                        return;
+                    }
+
+                    data.forEach(item => {
+                        const card = document.createElement('div');
+                        card.className = 'result-card';
+                        
+                        card.innerHTML = `
+                            <p><strong>ID:</strong> ${item.id || 'N/A'}</p>
+                            <p><strong>Name:</strong> ${item.name || 'N/A'}</p>
+                            <p><strong>Phone No.:</strong> ${item['phone no.'] || 'N/A'}</p>
+                            <p><strong>Rent:</strong> ${item.rent || 'N/A'}</p>
+                            <p><strong>Location:</strong> ${item.location || 'N/A'}</p>
+                        `;
+                        resultsContainer.appendChild(card);
+                    });
+                })
+                .catch(err => {
+                    console.error('Error fetching search results:', err);
+                });
+        }
+
+        searchBtn.addEventListener('click', performSearch);
+
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+
+        searchInput.addEventListener('input', function() {
+            if (searchInput.value.trim() === "") {
+                resultsContainer.innerHTML = '<div class="placeholder-text">Search box khali hone par sabhi information gayab rahengi.</div>';
+            }
+        });
+    </script>
+
+</body>
+</html>
+
