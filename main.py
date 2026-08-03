@@ -6,10 +6,10 @@ from motor.motor_asyncio import AsyncIOMotorClient
 
 app = FastAPI()
 
-# Jinja2 templates folder setup
+# Templates directory setup
 templates = Jinja2Templates(directory="templates")
 
-# MongoDB Connection details provided by user
+# MongoDB Connection details
 MONGO_URI = "mongodb+srv://pawandevprasad1_db_user:123451234500@cluster0.acobnxp.mongodb.net/?appName=Cluster0"
 DB_NAME = "WOW"
 COLLECTION_NAME = "WOW"
@@ -51,4 +51,3 @@ if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run("main:app", host="0.0.0.0", port=port)
-  
