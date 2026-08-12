@@ -1,166 +1,343 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WOW Database Search Engine</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        body {
-            background-color: #C0C0C0; /* Silver background */
-            color: #333;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 40px 20px;
-        }
-        .container {
-            width: 100%;
-            max-width: 800px;
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 25px;
-            color: #2c3e50;
-            font-size: 26px;
-        }
-        .search-box-wrapper {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-        }
-        input[type="text"] {
-            flex: 1;
-            padding: 14px 18px;
-            font-size: 16px;
-            border: 2px solid #ccc;
-            border-radius: 8px;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-        input[type="text"]:focus {
-            border-color: #3498db;
-        }
-        button {
-            padding: 14px 25px;
-            font-size: 16px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #2980b9;
-        }
-        #results-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            max-height: 60vh;
-            overflow-y: auto;
-        }
-        .result-card {
-            background: #f8f9fa;
-            border-left: 5px solid #3498db;
-            padding: 15px 20px;
-            border-radius: 6px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            line-height: 1.6;
-        }
-        .result-card p {
-            margin: 4px 0;
-            font-size: 15px;
-        }
-        .placeholder-text {
-            text-align: center;
-            color: #777;
-            font-style: italic;
-            margin-top: 20px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Property Portal</title>
+  <style>
+    :root {
+      --purple-dark: #1e092b;
+      --purple-mid: #3c1361;
+      --gold: #f39c12;
+      --gold-light: #f1c40f;
+      --silver: #e0e0e0;
+      --silver-metallic: linear-gradient(135deg, #d3d3d3 0%, #ffffff 50%, #a9a9a9 100%);
+      --gold-metallic: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
+      --purple-metallic: linear-gradient(135deg, #2a0845 0%, #6441a5 100%);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: var(--purple-dark);
+      color: var(--silver);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      background: var(--purple-metallic);
+      border: 2px solid var(--gold);
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 0 15px rgba(243, 156, 18, 0.3);
+    }
+
+    h2 {
+      text-align: center;
+      background: var(--gold-metallic);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 2rem;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--silver);
+      font-weight: 600;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--silver);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    input:focus, textarea:focus {
+      border-color: var(--gold-light);
+      box-shadow: 0 0 8px rgba(241, 196, 15, 0.5);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--gold-metallic);
+      border: none;
+      border-radius: 8px;
+      color: #1e092b;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(243, 156, 18, 0.4);
+    }
+
+    .btn-secondary {
+      background: var(--silver-metallic);
+      color: #1e092b;
+    }
+
+    .toggle-link {
+      text-align: center;
+      margin-top: 15px;
+      color: var(--silver);
+    }
+
+    .toggle-link span {
+      color: var(--gold-light);
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    /* Dashboard styling */
+    .hidden { display: none; }
+
+    .box-card {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--gold);
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .box-card:hover {
+      background: rgba(0, 0, 0, 0.5);
+      border-color: var(--silver);
+    }
+
+    .box-card h3 {
+      background: var(--silver-metallic);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .property-item {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--silver);
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 15px;
+    }
+
+    .property-item img {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid var(--gold);
+      margin-top: 10px;
+      max-height: 250px;
+      object-fit: cover;
+    }
+
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--gold);
+    }
+  </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>WOW Database Search Engine</h1>
-        <div class="search-box-wrapper">
-            <input type="text" id="searchInput" placeholder="Yahan alphabets ya keywords type karein..." autocomplete="off">
-            <button id="searchBtn">Search</button>
+  <div class="container">
+    
+    <!-- Auth Box (Login / Signup) -->
+    <div id="authBox">
+      <h2 id="authTitle">Login</h2>
+      <form id="authForm">
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" id="name" placeholder="Apna name dalein" required>
         </div>
-        <div id="results-container">
-            <div class="placeholder-text">Search box khali hone par sabhi information gayab rahengi.</div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="password" placeholder="Password dalein" required>
         </div>
+        <button type="submit" class="btn" id="submitBtn">Login</button>
+      </form>
+      <div class="toggle-link">
+        <p id="toggleText">Account nahi hai? <span onclick="toggleAuthMode()">Sign Up karein</span></p>
+      </div>
     </div>
 
-    <script>
-        const searchInput = document.getElementById('searchInput');
-        const searchBtn = document.getElementById('searchBtn');
-        const resultsContainer = document.getElementById('results-container');
+    <!-- Dashboard Box -->
+    <div id="dashboardBox" class="hidden">
+      <div class="header-bar">
+        <span>Welcome, <b id="userName" style="color:var(--gold-light)"></b></span>
+        <button onclick="logout()" class="btn btn-secondary" style="width: auto; padding: 5px 15px; margin: 0;">Logout</button>
+      </div>
 
-        function performSearch() {
-            const query = searchInput.value.trim();
-            
-            if (query === "") {
-                resultsContainer.innerHTML = '<div class="placeholder-text">Search box khali hone par sabhi information gayab rahengi.</div>';
-                return;
-            }
+      <!-- Box 1: Post Property -->
+      <div class="box-card" onclick="toggleSection('postPropertyForm')">
+        <h3>➕ Post Property</h3>
+        <p style="font-size: 0.85rem; color: #bbb;">Click karke property ki detail aur photo upload karein</p>
+      </div>
 
-            fetch(`/search?q=${encodeURIComponent(query)}`)
-                .then(response => response.json())
-                .then(data => {
-                    resultsContainer.innerHTML = '';
-                    
-                    if (data.length === 0) {
-                        resultsContainer.innerHTML = '<div class="placeholder-text">Koi matching information nahi mili.</div>';
-                        return;
-                    }
+      <div id="postPropertyForm" class="hidden" style="margin-bottom: 25px;">
+        <form id="propertyForm">
+          <div class="form-group">
+            <label>Property Title</label>
+            <input type="text" id="propTitle" placeholder="e.g. 2 BHK Apartment" required>
+          </div>
+          <div class="form-group">
+            <label>Price</label>
+            <input type="text" id="propPrice" placeholder="e.g. ₹15,000 / month" required>
+          </div>
+          <div class="form-group">
+            <label>Description (Information)</label>
+            <textarea id="propDesc" rows="3" placeholder="Property ki details yahan likhein..." required></textarea>
+          </div>
+          <div class="form-group">
+            <label>Gallery se Photo Chunein</label>
+            <input type="file" id="propImage" accept="image/*" required>
+          </div>
+          <button type="submit" class="btn">Database mein Upload Karein</button>
+        </form>
+      </div>
 
-                    data.forEach(item => {
-                        const card = document.createElement('div');
-                        card.className = 'result-card';
-                        
-                        card.innerHTML = `
-                            <p><strong>ID:</strong> ${item.id || 'N/A'}</p>
-                            <p><strong>Name:</strong> ${item.name || 'N/A'}</p>
-                            <p><strong>Phone No.:</strong> ${item['phone no.'] || 'N/A'}</p>
-                            <p><strong>Rent:</strong> ${item.rent || 'N/A'}</p>
-                            <p><strong>Location:</strong> ${item.location || 'N/A'}</p>
-                        `;
-                        resultsContainer.appendChild(card);
-                    });
-                })
-                .catch(err => {
-                    console.error('Error fetching search results:', err);
-                });
+      <!-- Box 2: View Saved Properties -->
+      <div class="box-card" onclick="loadSavedProperties()">
+        <h3>🏠 Saved Properties Dekhein</h3>
+        <p style="font-size: 0.85rem; color: #bbb;">Click karke MongoDB mein saved sara data aur photo dekhein</p>
+      </div>
+
+      <div id="savedPropertiesList" class="hidden"></div>
+    </div>
+
+  </div>
+
+  <script>
+    let isLogin = true;
+
+    function toggleAuthMode() {
+      isLogin = !isLogin;
+      document.getElementById('authTitle').innerText = isLogin ? 'Login' : 'Sign Up';
+      document.getElementById('submitBtn').innerText = isLogin ? 'Login' : 'Sign Up';
+      document.getElementById('toggleText').innerHTML = isLogin 
+        ? "Account nahi hai? <span onclick='toggleAuthMode()'>Sign Up karein</span>" 
+        : "Pehle se account hai? <span onclick='toggleAuthMode()'>Login karein</span>";
+    }
+
+    document.getElementById('authForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const password = document.getElementById('password').value;
+      const endpoint = isLogin ? '/api/login' : '/api/signup';
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, password })
+      });
+
+      const res = await response.json();
+      alert(res.message);
+
+      if (res.success) {
+        if (!isLogin) {
+          toggleAuthMode();
+        } else {
+          showDashboard(res.user);
         }
+      }
+    });
 
-        searchBtn.addEventListener('click', performSearch);
+    function showDashboard(user) {
+      document.getElementById('authBox').classList.add('hidden');
+      document.getElementById('dashboardBox').classList.remove('hidden');
+      document.getElementById('userName').innerText = user;
+    }
 
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                performSearch();
-            }
-        });
+    function toggleSection(id) {
+      const el = document.getElementById(id);
+      el.classList.toggle('hidden');
+    }
 
-        searchInput.addEventListener('input', function() {
-            if (searchInput.value.trim() === "") {
-                resultsContainer.innerHTML = '<div class="placeholder-text">Search box khali hone par sabhi information gayab rahengi.</div>';
-            }
-        });
-    </script>
+    document.getElementById('propertyForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData();
+      formData.append('title', document.getElementById('propTitle').value);
+      formData.append('price', document.getElementById('propPrice').value);
+      formData.append('description', document.getElementById('propDesc').value);
+      formData.append('image', document.getElementById('propImage').files[0]);
 
+      const response = await fetch('/api/post-property', {
+        method: 'POST',
+        body: formData
+      });
+
+      const res = await response.json();
+      alert(res.message);
+
+      if (res.success) {
+        document.getElementById('propertyForm').reset();
+        document.getElementById('postPropertyForm').classList.add('hidden');
+      }
+    });
+
+    async function loadSavedProperties() {
+      const container = document.getElementById('savedPropertiesList');
+      container.classList.toggle('hidden');
+
+      if (!container.classList.contains('hidden')) {
+        container.innerHTML = "<p>Loading...</p>";
+        const response = await fetch('/api/properties');
+        const res = await response.json();
+
+        if (res.success) {
+          if (res.properties.length === 0) {
+            container.innerHTML = "<p>Koi data nahi mila.</p>";
+            return;
+          }
+
+          container.innerHTML = res.properties.map(p => `
+            <div class="property-item">
+              <h4 style="color:var(--gold-light)">${p.title}</h4>
+              <p><b>Price:</b> ${p.price}</p>
+              <p><b>Posted By:</b> ${p.posted_by}</p>
+              <p style="margin-top:5px;">${p.description}</p>
+              ${p.image ? `<img src="${p.image}" alt="Property Photo">` : ''}
+            </div>
+          `).join('');
+        }
+      }
+    }
+
+    async function logout() {
+      await fetch('/api/logout', { method: 'POST' });
+      location.reload();
+    }
+  </script>
 </body>
 </html>
