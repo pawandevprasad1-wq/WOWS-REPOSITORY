@@ -9,12 +9,12 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "super_secret_golden_key_123")
 
 # MongoDB Atlas URI (Render environment variable se aayega)
-MONGO_URI = os.environ.get("MONGO_URI", "YOUR_MONGODB_ATLAS_CONNECTION_STRING")
+MONGO_URI = os.environ.get("MONGO_URI", "mongodb+srv://pawandevprasad1_db_user:12345@cluster0.acobnxp.mongodb.net/?appName=Cluster0")
 client = MongoClient(MONGO_URI)
 db = client['property_db']
 
-users_col = db['users']
-properties_col = db['properties']
+users_col = db['WOW']
+properties_col = db['WOW']
 
 @app.route('/')
 def home():
