@@ -6,18 +6,20 @@
     <title>Cloudinary Auto Uploader</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
-        body { background: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .card { background: #ffffff; padding: 25px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); width: 100%; max-width: 480px; text-align: center; }
+        body { background: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; }
+        .card { background: #ffffff; padding: 25px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); width: 100%; max-width: 500px; text-align: center; }
         h2 { color: #333; margin-bottom: 20px; font-size: 20px; }
         .file-label { display: block; border: 2px dashed #007bff; padding: 20px; border-radius: 8px; cursor: pointer; color: #007bff; font-weight: 600; margin-bottom: 15px; background: #f8faff; }
         input[type="file"] { display: none; }
         button { background: #007bff; color: white; border: none; padding: 12px 20px; font-size: 16px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; }
         button:hover { background: #0056b3; }
         #status { margin-top: 15px; font-size: 14px; color: #555; font-weight: 600; }
+        
+        /* Updated Result CSS */
         .url-box { margin-top: 20px; text-align: left; }
-        .url-item { display: flex; align-items: center; justify-content: space-between; background: #f8f9fa; border: 1px solid #ddd; padding: 10px; margin-bottom: 8px; border-radius: 6px; }
-        .url-text { font-size: 12px; color: #333; word-break: break-all; margin-right: 10px; }
-        .copy-btn { background: #28a745; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; flex-shrink: 0; }
+        .url-item { background: #f8f9fa; border: 1px solid #ddd; padding: 12px; margin-bottom: 10px; border-radius: 6px; }
+        .url-text { font-size: 13px; color: #333; word-break: break-all; display: block; margin-bottom: 8px; font-family: monospace; }
+        .copy-btn { background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 4px; font-size: 13px; cursor: pointer; width: 100%; font-weight: bold; }
         .copy-btn:hover { background: #218838; }
     </style>
 </head>
@@ -26,7 +28,7 @@
 <div class="card">
     <h2>Cloudinary Image Uploader</h2>
     <form id="uploadForm">
-        <label for="photoInput" class="file-label" id="fileLabel">Select 4-5 Photos</label>
+        <label for="photoInput" class="file-label" id="fileLabel">Select Photos</label>
         <input type="file" id="photoInput" multiple accept="image/*">
         <button type="submit">Upload to Cloudinary</button>
     </form>
@@ -41,7 +43,7 @@ const fileLabel = document.getElementById('fileLabel');
 
 fileInput.addEventListener('change', () => {
     const count = fileInput.files.length;
-    fileLabel.innerText = count > 0 ? `${count} Image(s) Selected` : 'Select 4-5 Photos';
+    fileLabel.innerText = count > 0 ? `${count} Image(s) Selected` : 'Select Photos';
 });
 
 document.getElementById('uploadForm').addEventListener('submit', async function(e) {
@@ -78,12 +80,12 @@ document.getElementById('uploadForm').addEventListener('submit', async function(
                 div.className = 'url-item';
                 div.innerHTML = `
                     <span class="url-text" id="url-${index}">${url}</span>
-                    <button class="copy-btn" onclick="copyUrl('url-${index}', this)">Copy</button>
+                    <button class="copy-btn" onclick="copyUrl('url-${index}', this)">Copy URL</button>
                 `;
                 resultDiv.appendChild(div);
             });
         } else {
-            statusDiv.innerText = "Error: " + data.error;
+            statusDiv.innerText = "Error: " + (data.error || "Upload failed");
         }
 
     } catch (error) {
@@ -97,7 +99,7 @@ function copyUrl(id, btn) {
         btn.innerText = "Copied!";
         btn.style.background = "#17a2b8";
         setTimeout(() => {
-            btn.innerText = "Copy";
+            btn.innerText = "Copy URL";
             btn.style.background = "#28a745";
         }, 2000);
     });
@@ -106,4 +108,3 @@ function copyUrl(id, btn) {
 
 </body>
 </html>
-
