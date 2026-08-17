@@ -5,11 +5,11 @@ import cloudinary.uploader
 
 app = Flask(__name__)
 
-# Render Environment Variables se credentials automatic read hongi
+# Direct Cloudinary Configuration
 cloudinary.config(
-    cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME"),
-    api_key = os.environ.get("CLOUDINARY_API_KEY"),
-    api_secret = os.environ.get("CLOUDINARY_API_SECRET"),
+    cloud_name = "pfmjg7ip",
+    api_key = "368463435529631",
+    api_secret = "6u7lnfIRo4ikkXSR_GM2ziUtStM",
     secure = True
 )
 
@@ -25,12 +25,15 @@ def upload_files():
     files = request.files.getlist('photos')
     uploaded_urls = []
 
-    for file in files:
-        if file.filename != '':
-            upload_result = cloudinary.uploader.upload(file)
-            uploaded_urls.append(upload_result['secure_url'])
+    try:
+        for file in files:
+            if file.filename != '':
+                upload_result = cloudinary.uploader.upload(file)
+                uploaded_urls.append(upload_result['secure_url'])
 
-    return jsonify({"urls": uploaded_urls})
+        return jsonify({"urls": uploaded_urls})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
