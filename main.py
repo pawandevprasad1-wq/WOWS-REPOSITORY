@@ -5,9 +5,9 @@ import cloudinary.uploader
 
 app = Flask(__name__)
 
-# Fixed & Verified Cloudinary Configuration
+# Aapke verified credentials:
 cloudinary.config(
-    cloud_name = 'pfwjg7ip',
+    cloud_name = 'pfmjg7ip',
     api_key = '368463435529631',
     api_secret = '6u7lnfIRo4ikkXSR_GM2ziUtStM',
     secure = True
@@ -28,7 +28,6 @@ def upload_files():
     try:
         for file in files:
             if file.filename != '':
-                # resource_type="auto" photo aur video dono ko upload karega
                 upload_result = cloudinary.uploader.upload(
                     file,
                     resource_type="auto"
