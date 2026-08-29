@@ -9,9 +9,9 @@
         body { background: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
         .card { background: #ffffff; padding: 25px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); width: 100%; max-width: 500px; text-align: center; }
         h2 { color: #333; margin-bottom: 20px; font-size: 20px; }
-        .file-label { display: block; border: 2px dashed #007bff; padding: 20px; border-radius: 8px; cursor: pointer; color: #007bff; font-weight: 600; margin-bottom: 15px; }
+        .file-label { display: block; border: 2px dashed #007bff; padding: 20px; border-radius: 8px; cursor: pointer; color: #007bff; font-weight: 600; }
         input[type="file"] { display: none; }
-        button { background: #007bff; color: white; border: none; padding: 12px 20px; font-size: 16px; border-radius: 6px; cursor: pointer; width: 100%; }
+        button { background: #007bff; color: white; border: none; padding: 12px 20px; font-size: 16px; border-radius: 6px; cursor: pointer; width: 100%; margin-top: 15px; }
         button:hover { background: #0056b3; }
         #status { margin-top: 15px; font-size: 14px; color: #555; font-weight: 600; }
 
@@ -19,17 +19,18 @@
         .url-box { margin-top: 20px; text-align: left; }
         .url-item { background: #f8f9fa; border: 1px solid #ddd; padding: 12px; margin-bottom: 10px; border-radius: 6px; }
         .url-text { font-size: 13px; color: #333; word-break: break-all; display: block; margin-bottom: 8px; font-family: monospace; }
-        .copy-btn { background: #28a745; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; width: auto; }
+        .copy-btn { background: #28a745; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; width: auto; margin-top: 0; }
         .copy-btn:hover { background: #218838; }
     </style>
 </head>
 <body>
 
     <div class="card">
-        <h2>Cloudinary Image Uploader</h2>
+        <h2>Cloudinary Media Uploader</h2>
         <form id="uploadForm">
-            <label for="photoInput" class="file-label" id="fileLabel">Select Photos</label>
-            <input type="file" id="photoInput" multiple accept="image/*">
+            <label for="photoInput" class="file-label" id="fileLabel">Select Photos or Videos</label>
+            <!-- accept attribute me video/ bhi allow kar diya hai -->
+            <input type="file" id="photoInput" multiple accept="image/*,video/*">
             <button type="submit">Upload to Cloudinary</button>
         </form>
 
@@ -43,7 +44,7 @@
 
         photoInput.addEventListener('change', () => {
             const count = photoInput.files.length;
-            fileLabel.innerText = count > 0 ? `${count} Image(s) Selected` : 'Select Photos';
+            fileLabel.innerText = count > 0 ? `${count} File(s) Selected` : 'Select Photos or Videos';
         });
 
         document.getElementById('uploadForm').addEventListener('submit', async function(e) {
@@ -53,7 +54,7 @@
             const resultDiv = document.getElementById('result');
 
             if (photoInput.files.length === 0) {
-                alert("Pehle photos select karein!");
+                alert("Pehle files select karein!");
                 return;
             }
 
@@ -62,7 +63,7 @@
                 formData.append('photos', photoInput.files[i]);
             }
 
-            statusDiv.innerText = "Uploading photos to Cloudinary...";
+            statusDiv.innerText = "Uploading files to Cloudinary...";
             resultDiv.innerHTML = "";
 
             try {
@@ -88,9 +89,10 @@
                     statusDiv.innerText = "Error: " + (data.error || "Upload failed");
                 }
             } catch (err) {
-                statusDiv.innerText = "Upload failed! Check server logs.";
+                statusDiv.innerText = "Upload failed. Check connection.";
             }
         });
     </script>
 </body>
 </html>
+
