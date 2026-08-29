@@ -5,7 +5,7 @@ import cloudinary.uploader
 
 app = Flask(__name__)
 
-# Aapke verified credentials:
+# Cloudinary Configuration
 cloudinary.config(
     cloud_name = 'pfmjg7ip',
     api_key = '368463435529631',
@@ -23,18 +23,29 @@ def upload_files():
         return jsonify({"error": "No files found"}), 400
 
     files = request.files.getlist('photos')
-    uploaded_urls = []
+    uploaded_results = []
 
     try:
-        for file in files:
+        # Loop me index track karke upload karenge
+        for index, file in enumerate(files):
             if file.filename != '':
                 upload_result = cloudinary.uploader.upload(
                     file,
                     resource_type="auto"
                 )
-                uploaded_urls.append(upload_result['secure_url'])
+                # Serial order maintain karne ke liye index bhi save karenge
+                uploaded_results.append({
+                    "order": index,
+                    "url": upload_result['secure_url']
+                })
 
-        return jsonify({"urls": uploaded_urls})
+        # Files ko original choice/selection order me sort karein
+        uploaded_results.sort(key=lambda x: x['order'])
+        
+        # Sorted URLs ki list return karein
+        final_urls = [item['url'] for item in uploaded_results]
+
+        return jsonify({"urls": final_urls})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
