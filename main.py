@@ -9,7 +9,7 @@ app = Flask(__name__)
 cloudinary.config(
     cloud_name="pfwjg7ip",
     api_key="368463435529631",
-    api_secret="6u7lnfiRo4ikkXSR_G02iUt5tM",
+    api_secret="6u73nfIRo4ikkXSR_G021UT5tM",
     secure=True
 )
 
@@ -28,14 +28,15 @@ def upload_files():
     try:
         for file in files:
             if file.filename != '':
-                upload_result = cloudinary.uploader.upload(file)
+                # resource_type="auto" karne se photos aur videos dono upload hongi
+                upload_result = cloudinary.uploader.upload(file, resource_type="auto")
                 uploaded_urls.append(upload_result['secure_url'])
 
         return jsonify({"urls": uploaded_urls})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
-    app.run(host='0.0.0.0', port=port)
+    app.run(host="0.0.0.0", port=port)
     
