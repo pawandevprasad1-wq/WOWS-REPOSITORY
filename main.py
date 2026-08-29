@@ -5,7 +5,7 @@ import cloudinary.uploader
 
 app = Flask(__name__)
 
-# Direct Cloudinary Configuration
+# Cloudinary Configuration
 cloudinary.config(
     cloud_name="pfwjg7ip",
     api_key="368463435529631",
@@ -28,8 +28,12 @@ def upload_files():
     try:
         for file in files:
             if file.filename != '':
-                # resource_type="auto" karne se photos aur videos dono upload hongi
-                upload_result = cloudinary.uploader.upload(file, resource_type="auto")
+                # resource_type="auto" aur chunk_size bada karke timeout error fix hota hai
+                upload_result = cloudinary.uploader.upload(
+                    file, 
+                    resource_type="auto",
+                    chunk_size=6000000  # 6MB chunks for smoother video upload
+                )
                 uploaded_urls.append(upload_result['secure_url'])
 
         return jsonify({"urls": uploaded_urls})
