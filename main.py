@@ -6,11 +6,11 @@ from concurrent.futures import ThreadPoolExecutor
 
 app = Flask(__name__)
 
-# Cloudinary Configuration
+# Cloudinary Configuration (Updated Credentials)
 cloudinary.config(
-    cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME', 'pfmjg7ip'),
-    api_key = os.environ.get('CLOUDINARY_API_KEY', '368463435529631'),
-    api_secret = os.environ.get('CLOUDINARY_API_SECRET'),
+    cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME', 'zowk74pz'),
+    api_key = os.environ.get('CLOUDINARY_API_KEY', '684481677341335'),
+    api_secret = os.environ.get('CLOUDINARY_API_SECRET', 'GrpVTqmhonJpsAJFm_YcY2wVnwM'),
     secure = True
 )
 
@@ -33,7 +33,7 @@ def upload_files():
     files = request.files.getlist('photos')
     files_with_index = list(enumerate(files))
     
-    # Ek saath max 5 threads me fast upload hoga
+    # Fast Parallel Upload (Ek saath 5 threads me fast upload)
     uploaded_results = []
     with ThreadPoolExecutor(max_workers=5) as executor:
         results = executor.map(upload_single_file, files_with_index)
