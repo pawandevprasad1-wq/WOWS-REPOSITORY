@@ -3,54 +3,71 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cloudinary File Uploader</title>
+  <title>Fast Cloudinary Batch Uploader</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f4f6f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-    .upload-card { background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+    body { font-family: Arial, sans-serif; background: #f4f6f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
+    .upload-card { background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 550px; }
+    h2 { margin-top: 0; text-align: center; color: #333; }
     input[type="file"] { margin: 15px 0; width: 100%; }
-    button { width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    button { width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px; }
     button:hover { background: #0056b3; }
     button:disabled { background: #a0c4ff; cursor: not-allowed; }
-    #status { margin-top: 15px; font-size: 14px; color: #555; }
-    .result-box { margin-top: 15px; display: none; background: #eef2f5; padding: 10px; border-radius: 6px; word-break: break-all; }
-    .copy-btn { background: #28a745; margin-top: 8px; }
-    .copy-btn:hover { background: #218838; }
+    #status { margin-top: 15px; font-size: 14px; text-align: center; font-weight: bold; color: #555; }
+    
+    .result-container { margin-top: 20px; display: none; }
+    .url-item { background: #f8f9fa; border: 1px solid #e9ecef; padding: 10px; border-radius: 6px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .url-text { font-size: 12px; word-break: break-all; color: #333; }
+    
+    .btn-small { width: auto; padding: 6px 12px; font-size: 12px; background: #28a745; flex-shrink: 0; }
+    .btn-small:hover { background: #218838; }
+    
+    .btn-copy-all { background: #17a2b8; margin-top: 10px; }
+    .btn-copy-all:hover { background: #138496; }
   </style>
 </head>
 <body>
 
 <div class="upload-card">
-  <h2>Cloudinary Uploader</h2>
-  <input type="file" id="fileInput" accept="image/*,video/*">
-  <button id="uploadBtn" onclick="uploadFile()">Upload Karein</button>
+  <h2>Fast Batch Uploader</h2>
+  
+  <!-- `multiple` attribute se ek sath kayi photos/videos select hongi -->
+  <input type="file" id="fileInput" accept="image/*,video/*" multiple>
+  <button id="uploadBtn" onclick="uploadFiles()">Upload Karein</button>
 
   <div id="status"></div>
 
-  <div id="resultBox" class="result-box">
-    <p id="fileUrl" style="margin: 5px 0; font-size: 13px;"></p>
-    <button class="copy-btn" onclick="copyUrl()">Copy URL</button>
+  <div id="resultContainer" class="result-container">
+    <div id="urlList"></div>
+    <button class="btn-copy-all" onclick="copyAllUrls()">Sabhi URLs Ek Sath Copy Karein</button>
   </div>
 </div>
 
 <script>
-  async function uploadFile() {
+  let uploadedUrls = [];
+
+  async function uploadFiles() {
     const fileInput = document.getElementById('fileInput');
     const statusDiv = document.getElementById('status');
-    const resultBox = document.getElementById('resultBox');
+    const resultContainer = document.getElementById('resultContainer');
+    const urlList = document.getElementById('urlList');
     const uploadBtn = document.getElementById('uploadBtn');
-    const fileUrl = document.getElementById('fileUrl');
 
     if (!fileInput.files.length) {
-      alert("Pehle file select karein!");
+      alert("Kripya kam se kam ek ya multiple photos/videos select karein!");
       return;
     }
 
     const formData = new FormData();
-    formData.append('file', fileInput.files[0]);
+    for (let i = 0; i < fileInput.files.length; i++) {
+      formData.append('files', fileInput.files[i]);
+    }
 
     uploadBtn.disabled = true;
-    statusDiv.innerText = "Uploading... Kripya intazar karein.";
-    resultBox.style.display = "none";
+    statusDiv.innerText = `${fileInput.files.length} Files Fast Speed Se Upload Ho Rahi Hain...`;
+    statusDiv.style.color = '#007bff';
+    resultContainer.style.display = "none";
+    urlList.innerHTML = '';
+    uploadedUrls = [];
 
     try {
       const res = await fetch('/api/upload', {
@@ -60,26 +77,49 @@
       const data = await res.json();
 
       if (res.ok) {
-        statusDiv.innerText = "Upload Safal Ho Gaya!";
-        fileUrl.innerText = data.url;
-        resultBox.style.display = "block";
+        statusDiv.innerText = "Sabhi Files Safaltapoorvak Upload Ho Gayi!";
+        statusDiv.style.color = '#28a745';
+        uploadedUrls = data.urls;
+
+        // Display each URL with copy button
+        uploadedUrls.forEach((url, index) => {
+          const item = document.createElement('div');
+          item.className = 'url-item';
+          item.innerHTML = `
+            <span class="url-text">${url}</span>
+            <button class="btn-small" onclick="copySingleUrl('${url}')">Copy</button>
+          `;
+          urlList.appendChild(item);
+        });
+
+        resultContainer.style.display = "block";
       } else {
         statusDiv.innerText = "Error: " + data.error;
+        statusDiv.style.color = '#dc3545';
       }
     } catch (err) {
-      statusDiv.innerText = "Server error. Kripya dobara try karein.";
+      statusDiv.innerText = "Server Error ya Slow Network Connection.";
+      statusDiv.style.color = '#dc3545';
     } finally {
       uploadBtn.disabled = false;
     }
   }
 
-  function copyUrl() {
-    const text = document.getElementById('fileUrl').innerText;
-    navigator.clipboard.writeText(text).then(() => {
+  function copySingleUrl(url) {
+    navigator.clipboard.writeText(url).then(() => {
       alert("URL Copy ho gaya!");
+    });
+  }
+
+  function copyAllUrls() {
+    if (uploadedUrls.length === 0) return;
+    const allText = uploadedUrls.join('\n');
+    navigator.clipboard.writeText(allText).then(() => {
+      alert("Sabhi URLs Ek Sath Copy Ho Gaye!");
     });
   }
 </script>
 
 </body>
 </html>
+
