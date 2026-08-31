@@ -33,7 +33,7 @@ def upload_files():
     files = request.files.getlist('photos')
     files_with_index = list(enumerate(files))
     
-    # Fast Parallel Upload (Ek saath 5 threads me upload hoga)
+    # Ek saath max 5 threads me fast upload hoga
     uploaded_results = []
     with ThreadPoolExecutor(max_workers=5) as executor:
         results = executor.map(upload_single_file, files_with_index)
@@ -41,7 +41,6 @@ def upload_files():
             if res:
                 uploaded_results.append(res)
         
-    # Order maintain rakhne ke liye sort karein
     uploaded_results.sort(key=lambda x: x['order'])
     final_urls = [item['url'] for item in uploaded_results]
 
